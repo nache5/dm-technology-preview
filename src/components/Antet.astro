@@ -82,3 +82,22 @@ const activ = (href: string) => cale.startsWith(href);
     .dreapta-mic { display: flex; }
   }
 </style>
+
+<script>
+  // Phone menu: close on a tap outside it, on Escape (focus back on the
+  // button), and after choosing a link.
+  const meniu = document.querySelector<HTMLDetailsElement>('.nav-mic');
+  if (meniu) {
+    const inchide = () => { meniu.open = false; };
+    document.addEventListener('click', (e) => {
+      if (meniu.open && !meniu.contains(e.target as Node)) inchide();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && meniu.open) {
+        inchide();
+        meniu.querySelector('summary')?.focus();
+      }
+    });
+    meniu.querySelectorAll('nav a').forEach((a) => a.addEventListener('click', inchide));
+  }
+</script>
