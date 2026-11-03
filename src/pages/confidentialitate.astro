@@ -1,0 +1,34 @@
+---
+import PaginaText from '../components/PaginaText.astro';
+import { firma } from '../data/firma.mjs';
+const s = firma.sediuSocial;
+---
+<PaginaText
+  title="Confidențialitate | DM Technology"
+  description="Ce date colectează site-ul DM Technology, de ce și ce drepturi ai."
+  h1="Confidențialitate"
+  noindex
+  schelet
+>
+  <h2>Cine prelucrează datele</h2>
+  <p>{firma.denumireLegala}, CUI {firma.cif}, Reg. Com. {firma.regCom}, cu sediul social în {s.strada}, {s.localitate}, jud. {s.judet}, {s.codPostal}. Contact: <a href={`mailto:${firma.email}`}>{firma.email}</a>, <a href={firma.telefonHref}>{firma.telefon}</a>.</p>
+
+  <h2>Ce date și de ce</h2>
+  <p>Site-ul nu folosește cookie-uri de urmărire și nu afișează reclame.</p>
+  <p>Formularul de ofertă nu trimite nimic către un server al nostru. Deschide WhatsApp cu mesajul scris de tine. Datele (nume, telefon, localitate, mesaj) ajung la noi doar dacă apeși Trimite în WhatsApp.</p>
+  <p>Le folosim doar ca să îți răspundem și să îți facem oferta. Temeiul este cererea ta înainte de un contract (art. 6 alin. (1) lit. b din GDPR).</p>
+
+  <h2>Cine mai vede datele</h2>
+  <ul>
+    <li>WhatsApp (Meta), prin care ne scrii.</li>
+    <li>Furnizorul de găzduire a site-ului.</li>
+    <li>TikTok, doar dacă pornești un clip de pe prima pagină. Din acel moment se aplică regulile TikTok, care poate seta cookie-uri.</li>
+  </ul>
+
+  <h2>Cât le păstrăm</h2>
+  <p><span class="todo">De confirmat cu DM: de exemplu, cât durează discuția despre ofertă și, dacă devii client, perioada cerută de legea contabilității.</span></p>
+
+  <h2>Drepturile tale</h2>
+  <p>Poți cere acces la datele tale, corectarea sau ștergerea lor, restricționarea prelucrării, portabilitatea lor și te poți opune prelucrării. Scrie-ne la <a href={`mailto:${firma.email}`}>{firma.email}</a>.</p>
+  <p>Ai dreptul să depui plângere la Autoritatea Națională de Supraveghere a Prelucrării Datelor cu Caracter Personal: <a href="https://www.dataprotection.ro/" rel="noopener">dataprotection.ro</a>.</p>
+</PaginaText>

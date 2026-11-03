@@ -1,0 +1,28 @@
+---
+// Shared shell for the plain text pages (rental terms, privacy, about...).
+import Baza from '../layouts/Baza.astro';
+import Cale from './Cale.astro';
+import { caleSchema } from '../lib/schema.js';
+
+interface Props { title: string; description: string; h1: string; noindex?: boolean; schelet?: boolean; cale?: boolean }
+const { title, description, h1, noindex = false, schelet = false, cale = true } = Astro.props;
+const pasi = [{ nume: h1, href: Astro.url.pathname }];
+---
+<Baza title={title} description={description} noindex={noindex} schema={cale ? [caleSchema(pasi, Astro.site)] : []}>
+  <div class="wrap pagina">
+    {cale && <Cale pasi={pasi} />}
+    <h1>{h1}</h1>
+    {schelet && <p class="warn">Schelet: textul final vine de la DM (și, pentru paginile legale, se verifică juridic).</p>}
+    <div class="corp"><slot /></div>
+    <slot name="dupa" />
+  </div>
+</Baza>
+
+<style>
+  .pagina { padding-bottom: var(--sp-section); }
+  h1 { margin: 20px 0 20px; }
+  .pagina > .warn { margin-bottom: 24px; max-width: 46em; }
+  .corp { max-width: 38em; display: flex; flex-direction: column; gap: 16px; font-size: 18px; }
+  .corp :global(h2) { font-size: var(--t-h3); margin-top: 20px; }
+  .corp :global(ul), .corp :global(ol) { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+</style>

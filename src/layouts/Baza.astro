@@ -1,0 +1,80 @@
+---
+import '@fontsource-variable/schibsted-grotesk/wght.css';
+import '../styles/global.css';
+import Antet from '../components/Antet.astro';
+import Subsol from '../components/Subsol.astro';
+import { firma, lipsa } from '../data/firma.mjs';
+import { PREVIEW } from '../lib/preview.mjs';
+
+interface Props {
+  title: string;
+  description: string;
+  noindex?: boolean;
+  ogImage?: string;
+  schema?: object[];
+}
+const { title, description, noindex = false, ogImage, schema = [] } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+const business = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': new URL('/#firma', Astro.site).href,
+  name: firma.nume,
+  url: Astro.site!.href,
+  telephone: firma.telefonHref.replace('tel:', ''),
+  email: firma.email,
+  legalName: firma.denumireLegala,
+  taxID: firma.cui,
+  ...(firma.platitorTva ? { vatID: firma.cif } : {}),
+  foundingDate: String(firma.infiintata),
+  identifier: { '@type': 'PropertyValue', propertyID: 'Nr. Reg. Com.', value: firma.regCom },
+  ...(lipsa(firma.adresa)
+    ? {}
+    : {
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: firma.adresa.strada,
+          addressLocality: firma.adresa.localitate,
+          addressRegion: firma.adresa.judet,
+          postalCode: firma.adresa.codPostal,
+          addressCountry: 'RO',
+        },
+      }),
+  openingHoursSpecification: firma.orar
+    ? [{ '@type': 'OpeningHoursSpecification', dayOfWeek: firma.orar.zile, opens: firma.orar.deschide, closes: firma.orar.inchide }]
+    : undefined,
+  areaServed: [{ '@type': 'City', name: 'București' }, { '@type': 'AdministrativeArea', name: 'Ilfov' }],
+};
+const jsonLd = [business, ...schema];
+---
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {(noindex || PREVIEW) && <meta name="robots" content={PREVIEW ? 'noindex, nofollow' : 'noindex, follow'} />}
+    <meta name="theme-color" content="#FFFFFF" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ro_RO" />
+    <meta property="og:site_name" content={firma.nume} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site).href} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip" href="#continut">Sari la conținut</a>
+    <Antet />
+    <main id="continut">
+      <slot />
+    </main>
+    <Subsol />
+  </body>
+</html>

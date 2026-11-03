@@ -1,0 +1,47 @@
+---
+// Rental, on the shared service layout.
+import PaginaServiciu from '../layouts/PaginaServiciu.astro';
+import CardCategorie from '../components/CardCategorie.astro';
+import { categorii } from '../data/categorii.mjs';
+import { firma } from '../data/firma.mjs';
+---
+<PaginaServiciu
+  title="Cum închiriezi utilaje pentru pardoseli | DM Technology"
+  description="Închiriezi mașini de șlefuit beton, mașini de sablat, freze și aspiratoare industriale pe zi, săptămână sau lună, din depozitul DM Technology din Voluntari, lângă București."
+  cale="Închiriere"
+  h1="Închiriere utilaje pentru pardoseli"
+  lead="Pe zi, săptămână sau lună, din depozitul nostru din Voluntari, lângă București. Alegi utilajul, noi îl pregătim."
+  imagine={{ cheie: 'ref/hero-arc-telefon', alt: 'Utilajele DM pentru închiriere: freză, mașină de sablat, mașină de șlefuit, aspirator și mașină de decopertat' }}
+  atuuriTitlu="Ce primești odată cu utilajul"
+  atuuri={[
+    { icon: 'bifa', titlu: 'Utilaj verificat', text: 'Pornit și verificat înainte să plece din depozit.', todo: 'de confirmat' },
+    { icon: 'pachet', titlu: 'Consumabilele potrivite', text: 'Discuri, alice sau saci pentru aspirator, după lucrare.', todo: 'de confirmat' },
+    { icon: 'casca', titlu: 'Instruire la predare', text: 'Îți arătăm cum se folosește și cum se reglează.', todo: 'de confirmat' },
+    { icon: 'ceas', titlu: 'Program', text: `${firma.program}, în depozitul din Voluntari.` },
+  ]}
+  continutTitlu="Ce poți închiria"
+  continutLink={{ text: 'Toate utilajele', href: '/utilaje/' }}
+  etapeTitlu="Cum închiriezi, în 4 pași"
+  etape={[
+    { icon: 'lupa', titlu: 'Alegi utilajul', text: 'Din site sau la telefon, după lucrare și suprafață.' },
+    { icon: 'chat', titlu: 'Confirmăm perioada', text: 'Pe WhatsApp sau la telefon: prețul final și ce primești.' },
+    { icon: 'camion', titlu: 'Ridici sau livrăm', text: 'Din depozitul din Voluntari, lângă București, sau pe șantier.', todo: 'livrarea de confirmat' },
+    { icon: 'retur', titlu: 'Îl aduci înapoi', text: 'La sfârșitul perioadei. Prelungești dacă mai ai nevoie.', todo: 'prelungirea de confirmat' },
+  ]}
+  placiTitlu="Condiții, pe scurt"
+  placi={[
+    { icon: 'calendar', titlu: 'Perioadă', text: 'Pe zi, săptămână sau lună.', todo: 'perioada minimă de confirmat' },
+    { icon: 'scut', titlu: 'Garanție', text: 'Se lasă la ridicare și se returnează la predare.', todo: 'suma de confirmat' },
+    { icon: 'camion', titlu: 'Transport', text: firma.livrare ?? 'Ridici din depozit.', todo: firma.livrare ? null : 'livrarea pe șantier de confirmat' },
+    { icon: 'chitanta', titlu: 'Prețuri', text: 'Afișate fără TVA, pe zi.' },
+  ]}
+  placiNota={'Toate condițiile sunt în <a href="/termeni-inchiriere/">termenii de închiriere</a>.'}
+  intrebari={[
+    { q: 'Îmi trebuie curent trifazic?', a: 'Multe utilaje mari lucrează la 400 V. Pe pagina fiecărui utilaj scrie alimentarea; există și modele la 230 V.' },
+    { q: 'Ce aspirator iau?', a: 'Pe pagina fiecărei mașini scrie ce aspirator i se potrivește. Ți-l dăm împreună cu utilajul.' },
+    { q: 'Pot închiria fără să fiu firmă?', a: null, todo: 'De la DM: închiriați și persoanelor fizice?' },
+  ]}
+  formTitlu="Cere ofertă de închiriere"
+>
+  <div class="grid grid-3">{categorii.map((c) => <CardCategorie c={c} />)}</div>
+</PaginaServiciu>

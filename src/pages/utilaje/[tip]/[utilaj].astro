@@ -1,0 +1,139 @@
+---
+import { getImage } from 'astro:assets';
+import Baza from '../../../layouts/Baza.astro';
+import Foto from '../../../components/Foto.astro';
+import Pret from '../../../components/Pret.astro';
+import Cale from '../../../components/Cale.astro';
+import Formular from '../../../components/Formular.astro';
+import CardUtilaj from '../../../components/CardUtilaj.astro';
+import { utilaje, utilaj as gaseste, numeComplet } from '../../../data/utilaje.mjs';
+import { categorie } from '../../../data/categorii.mjs';
+import { imagine } from '../../../lib/imagini.js';
+import { caleSchema, produsSchema } from '../../../lib/schema.js';
+import { firma } from '../../../data/firma.mjs';
+
+export function getStaticPaths() {
+  return utilaje.map((u) => ({ params: { tip: u.categorie, utilaj: u.slug } }));
+}
+const u = gaseste(Astro.params.utilaj)!;
+const c = categorie(u.categorie)!;
+const nume = numeComplet(u);
+const url = new URL(Astro.url.pathname, Astro.site).href;
+const og = await getImage({ src: imagine(u.imagini[0]), width: 1200, format: 'jpg' });
+
+const pasi = [
+  { nume: 'Utilaje', href: '/utilaje/' },
+  { nume: c.nume, href: `/utilaje/${c.slug}/` },
+  { nume, href: Astro.url.pathname },
+];
+const schema = [caleSchema(pasi, Astro.site), produsSchema(u, url, new URL(og.src, Astro.site).href, Astro.site)].filter(Boolean);
+
+const k = u.cheie;
+const cifre = [
+  { v: k.latimeMm, u: 'mm lățime' },
+  { v: k.tensiuneV, u: 'volți' },
+  { v: k.putereKw && String(k.putereKw).replace('.', ','), u: 'kW' },
+  { v: k.greutateKg, u: 'kg' },
+];
+const impreuna = u.impreunaCu.map(gaseste).filter(Boolean);
+const optiuni = [u.inchiriere.disponibil && 'de închiriat', u.vanzare.disponibil && 'de vânzare'].filter(Boolean).join(' și ');
+// Under ~65 characters where possible: drop the brand suffix before the keywords.
+const lung = `${nume}, ${c.singular.toLowerCase()} ${optiuni} | DM Technology`;
+const title = lung.length <= 65 ? lung : `${nume}, ${c.singular.toLowerCase()} ${optiuni}`.length <= 65 ? `${nume}, ${c.singular.toLowerCase()} ${optiuni}` : `${nume} ${optiuni} | DM Technology`;
+const description = `${nume}: ${c.singular.toLowerCase()} ${optiuni} în București. ${u.pentruCe}`;
+---
+<Baza title={title} description={description} noindex={u.exemplu} ogImage={og.src} schema={schema}>
+  <div class="wrap">
+    {u.exemplu && <p class="warn sus">Pagină de exemplu: arată cum va arăta un utilaj. Datele reale vin de la DM. Pagina nu apare în Google.</p>}
+    <Cale pasi={pasi} />
+  </div>
+
+  <article class="wrap grila">
+    <div class="galerie">
+      <Foto cheie={u.imagini[0]} alt={nume} clasa="principala" widths={[480, 720, 960, 1280]} sizes="(max-width: 960px) 100vw, 680px" prioritar />
+      {u.imagini.length > 1 && (
+        <div class="mici">
+          {u.imagini.slice(1).map((im) => <Foto cheie={im} alt={`${nume}, altă vedere`} clasa="mica" widths={[240, 480]} sizes="200px" />)}
+        </div>
+      )}
+    </div>
+
+    <div class="info">
+      <p class="muted"><a href={`/utilaje/${c.slug}/`} class="muted">{c.singular}</a></p>
+      <h1>{nume}</h1>
+      <div class="pastile">
+        {u.inchiriere.disponibil && <span class="pill">Închiriere</span>}
+        {u.vanzare.disponibil && <span class="pill">Vânzare</span>}
+        {u.stare === 'second-hand' && <span class="pill">Second-hand</span>}
+      </div>
+      <div class="preturi">
+        {u.inchiriere.disponibil && <p class="pret-mare"><Pret lei={u.inchiriere.pretZi} laCerere={u.pretLaCerere} /></p>}
+        {u.inchiriere.disponibil && !u.pretLaCerere && <p class="muted"><Pret lei={u.inchiriere.pretSaptamana} unitate="săptămână" dela={false} /></p>}
+        {u.vanzare.disponibil && <p class="muted">Vânzare: <Pret lei={u.vanzare.pret} unitate="buc." dela={false} laCerere={u.pretLaCerere} /></p>}
+      </div>
+
+      <dl class="cifre num">
+        {cifre.map((x) => (
+          <div><dt class="muted">{x.u}</dt><dd>{x.v ?? <span class="todo">—</span>}</dd></div>
+        ))}
+      </dl>
+
+      <ul class="trei">
+        <li><span class="muted">Pentru ce</span>{u.pentruCe}</li>
+        <li><span class="muted">Pe ce suprafețe</span>{u.suprafete}</li>
+        <li><span class="muted">Cât face pe zi</span>{u.productivitate}</li>
+      </ul>
+
+      <div class="butoane">
+        <a href="#cerere" class="btn btn-primary">Cere ofertă</a>
+        <a href={firma.telefonHref} class="btn btn-soft">Sună acum</a>
+      </div>
+    </div>
+  </article>
+
+  {impreuna.length > 0 && (
+    <section class="wrap section-tight" aria-labelledby="impreuna">
+      <h2 id="impreuna" class="h2">Merge împreună cu</h2>
+      <div class="grid grid-3">{impreuna.map((x) => <CardUtilaj u={x} />)}</div>
+    </section>
+  )}
+
+  <section class="wrap section-tight grila-jos">
+    <div>
+      <h2 class="h2">Specificații</h2>
+      <table class="specs num">
+        <tbody>{u.specificatii.map(([a, b]) => <tr><th scope="row">{a}</th><td>{b}</td></tr>)}</tbody>
+      </table>
+      {u.manualPdf && <p class="manual"><a href={u.manualPdf} class="btn btn-mic btn-contur">Manual și declarație CE (PDF)</a></p>}
+    </div>
+    <Formular utilaj={nume} titlu="Cere ofertă pentru acest utilaj" />
+  </section>
+</Baza>
+
+<style>
+  .sus { margin: 8px 0 16px; }
+  .grila { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 48px; padding-top: 20px; padding-bottom: 56px; align-items: start; }
+  .galerie :global(.principala) { aspect-ratio: 1 / 1; }
+  .mici { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+  .mici :global(.mica) { aspect-ratio: 1 / 1; }
+  .info { display: flex; flex-direction: column; gap: 14px; }
+  h1 { font-size: var(--t-h1-produs); }
+  .pastile { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pret-mare { font-size: 26px; font-weight: 700; }
+  .preturi { display: flex; flex-direction: column; gap: 4px; }
+  .cifre { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 6px 0 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .cifre div { padding: 12px 0; }
+  .cifre dt { font-size: var(--t-mic); }
+  .cifre div { display: flex; flex-direction: column-reverse; }
+  .cifre dd { margin: 0; font-size: 24px; font-weight: 700; }
+  .trei { list-style: none; margin: 0; padding: 0; }
+  .trei li { padding: 10px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; font-size: 17px; }
+  .trei li span { font-size: var(--t-mic); }
+  .butoane { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+  .grila-jos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 48px; align-items: start; }
+  .manual { margin-top: 16px; }
+  @media (max-width: 960px) {
+    .grila { grid-template-columns: 1fr; gap: 24px; }
+  }
+  @media (max-width: 700px) { .cifre dd { font-size: 20px; } }
+</style>

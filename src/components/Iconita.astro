@@ -1,0 +1,35 @@
+---
+// Every icon on the site. Phosphor (https://phosphoricons.com) for the UI
+// icons; WhatsApp uses its official glyph (Simple Icons). Inlined at build
+// time: no icon font, no extra request.
+import telefon from '@phosphor-icons/core/assets/regular/phone.svg?raw';
+import meniu from '@phosphor-icons/core/assets/regular/list.svg?raw';
+import inchide from '@phosphor-icons/core/assets/regular/x.svg?raw';
+import play from '@phosphor-icons/core/assets/fill/play-fill.svg?raw';
+import camion from '@phosphor-icons/core/assets/regular/truck.svg?raw';
+import calendar from '@phosphor-icons/core/assets/regular/calendar.svg?raw';
+import scut from '@phosphor-icons/core/assets/regular/shield-check.svg?raw';
+import pachet from '@phosphor-icons/core/assets/regular/package.svg?raw';
+import chitanta from '@phosphor-icons/core/assets/regular/receipt.svg?raw';
+import lupa from '@phosphor-icons/core/assets/regular/magnifying-glass.svg?raw';
+import chat from '@phosphor-icons/core/assets/regular/chat-circle-text.svg?raw';
+import retur from '@phosphor-icons/core/assets/regular/arrow-u-down-left.svg?raw';
+import bifa from '@phosphor-icons/core/assets/regular/check-circle.svg?raw';
+import cheie from '@phosphor-icons/core/assets/regular/wrench.svg?raw';
+import casca from '@phosphor-icons/core/assets/regular/hard-hat.svg?raw';
+import echipa from '@phosphor-icons/core/assets/regular/users-three.svg?raw';
+import loc from '@phosphor-icons/core/assets/regular/map-pin.svg?raw';
+import ceas from '@phosphor-icons/core/assets/regular/clock.svg?raw';
+import { siWhatsapp } from 'simple-icons';
+
+const whatsapp = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="${siWhatsapp.path}"/></svg>`;
+const surse = { telefon, meniu, inchide, play, whatsapp, camion, calendar, scut, pachet, chitanta, lupa, chat, retur, bifa, cheie, casca, echipa, loc, ceas };
+
+interface Props { nume: keyof typeof surse; marime?: number; clasa?: string }
+const { nume, marime = 22, clasa = '' } = Astro.props;
+const svg = surse[nume].replace(
+  '<svg',
+  `<svg aria-hidden="true" focusable="false" width="${marime}" height="${marime}"${clasa ? ` class="${clasa}"` : ''}`,
+);
+---
+<Fragment set:html={svg} />

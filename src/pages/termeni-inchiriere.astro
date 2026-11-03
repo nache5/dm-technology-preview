@@ -1,0 +1,21 @@
+---
+import PaginaText from '../components/PaginaText.astro';
+import { firma } from '../data/firma.mjs';
+const s = firma.sediuSocial;
+---
+<PaginaText
+  title="Termeni de închiriere | DM Technology"
+  description="Condițiile de închiriere a utilajelor DM Technology."
+  h1="Termeni de închiriere"
+  noindex
+  schelet
+>
+  <h2>Cine închiriază</h2>
+  <p>{firma.denumireLegala}, CUI {firma.cif}, Reg. Com. {firma.regCom}, cu sediul social în {s.strada}, {s.localitate}, jud. {s.judet}, {s.codPostal}.</p>
+
+  <h2>Condiții</h2>
+  <p><span class="todo">De completat cu DM: perioada minimă, garanția, ce se întâmplă la întârziere sau defect, cine plătește consumabilele, transportul, documentele cerute la predare.</span></p>
+
+  <h2>Litigii</h2>
+  <p>Pentru reclamații ne scrii la <a href={`mailto:${firma.email}`}>{firma.email}</a>. Consumatorii se pot adresa și ANPC, inclusiv prin <a href="https://anpc.ro/ce-este-sal/" rel="noopener">soluționarea alternativă a litigiilor (SAL)</a>.</p>
+</PaginaText>

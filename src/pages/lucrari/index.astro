@@ -1,0 +1,98 @@
+---
+// Works DM executes, on the shared service layout. Each work is a block with
+// its own anchor (#sablare-beton, ...).
+import PaginaServiciu from '../../layouts/PaginaServiciu.astro';
+import Foto from '../../components/Foto.astro';
+import ClipTiktok from '../../components/ClipTiktok.astro';
+import Iconita from '../../components/Iconita.astro';
+import { lucrari, lucrare as gaseste } from '../../data/lucrari.mjs';
+import { proiecte } from '../../data/proiecte.mjs';
+import { clipuri } from '../../data/tiktok.mjs';
+
+const clip = (id: string) => clipuri.find((c) => c.id === id);
+const schema = lucrari.map((l) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: l.nume,
+  description: l.scurt,
+  provider: { '@id': new URL('/#firma', Astro.site).href },
+  areaServed: [{ '@type': 'City', name: 'București' }, { '@type': 'AdministrativeArea', name: 'Ilfov' }],
+  url: new URL(`/lucrari/#${l.slug}`, Astro.site).href,
+}));
+---
+<PaginaServiciu
+  title="Sablare, șlefuire, frezare beton București | DM Technology"
+  description="DM Technology execută lucrări de sablare, șlefuire, frezare și decopertare a pardoselilor, cu echipa și utilajele proprii, în București și Ilfov."
+  cale="Lucrări"
+  h1="DM Technology execută și lucrări de pardoseli"
+  lead="Nu doar închiriem și vindem utilaje. Venim cu echipa și utilajele noastre și facem noi lucrarea: sablare, șlefuire, frezare și decopertare."
+  imagine={{ cheie: 'tiktok/7701059059868257558', alt: 'Suprafață de beton înainte și după sablare, lucrare DM Technology', pozitie: '50% 30%' }}
+  atuuriTitlu="De ce să lucrezi cu noi"
+  atuuri={[
+    { icon: 'casca', titlu: 'Echipa noastră', text: 'Oameni care lucrează zilnic cu aceste utilaje.' },
+    { icon: 'cheie', titlu: 'Utilajele noastre', text: 'Aceleași mașini pe care le închiriem și le vindem.' },
+    { icon: 'loc', titlu: 'Hale, parcări, poduri, piste', text: 'De la câțiva metri pătrați la șantiere mari.' },
+    { icon: 'chat', titlu: 'Ofertă rapidă', text: 'Ne trimiți poze și suprafața pe WhatsApp.' },
+  ]}
+  continutTitlu="Ce lucrări facem"
+  etapeTitlu="Cum lucrăm, în 4 pași"
+  etape={[
+    { icon: 'chat', titlu: 'Ne trimiți poze', text: 'Poze cu pardoseala și suprafața, pe WhatsApp sau la telefon.' },
+    { icon: 'chitanta', titlu: 'Îți dăm prețul', text: 'Pe m², în funcție de suprafață și starea betonului.', todo: 'vizita pe șantier de confirmat' },
+    { icon: 'casca', titlu: 'Executăm lucrarea', text: 'Cu echipa și utilajele noastre, cu aspirator industrial.' },
+    { icon: 'bifa', titlu: 'Predăm suprafața', text: 'Curată și gata pentru stratul următor.' },
+  ]}
+  placiTitlu="Unde am lucrat"
+  placi={proiecte.map((p) => ({ icon: 'loc', titlu: p.nume, text: `${gaseste(p.lucrare)?.nume}: ${p.detaliu}`, todo: p.confirmat ? null : 'de confirmat' }))}
+  intrebari={[
+    { q: 'Cât costă o lucrare?', a: null, todo: 'De la DM: preț pe m² sau doar la cerere, după poze.' },
+    { q: 'Lucrați și în afara Bucureștiului?', a: null, todo: 'De la DM: zona în care lucrați.' },
+    { q: 'Pot închiria utilajul și să lucrez singur?', a: 'Da. Închiriezi aceleași utilaje cu care lucrăm, pe zi, săptămână sau lună. Vezi pagina Închiriere.' },
+  ]}
+  formTitlu="Cere ofertă pentru o lucrare"
+  schema={schema}
+>
+  <div class="lucrari">
+    {lucrari.map((l, i) => {
+      const c = l.clipuri.length ? clip(l.clipuri[0]) : null;
+      return (
+        <article id={l.slug} class:list={['lucrare', { invers: i % 2 === 1 }]} aria-labelledby={`${l.slug}-titlu`}>
+          <div class="vizual">
+            {c ? <ClipTiktok clip={c} /> : <Foto cheie={l.imagine} alt={l.nume} clasa="poza" widths={[400, 640, 860]} sizes="(max-width: 900px) 100vw, 360px" />}
+          </div>
+          <div class="text">
+            <h3 id={`${l.slug}-titlu`}>{l.nume}</h3>
+            <p class="scurt">{l.scurt}</p>
+            {l.intro.map((t: string) => <p class="muted">{t}</p>)}
+            <ul class="bife">
+              {l.pentruCe.map((x: string) => <li><span class="bifa" aria-hidden="true"><Iconita nume="bifa" marime={22} /></span>{x}</li>)}
+            </ul>
+            <a href="#cerere" class="btn btn-mic btn-primary cere">Cere ofertă pentru {l.nume.toLowerCase()}</a>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</PaginaServiciu>
+
+<style>
+  .lucrari { display: flex; flex-direction: column; }
+  .lucrare { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 56px; align-items: center; padding-block: 40px; border-top: 1px solid var(--line); scroll-margin-top: 90px; }
+  .lucrare:first-child { border-top: 0; padding-top: 0; }
+  .lucrare.invers { grid-template-columns: minmax(0, 1fr) minmax(0, 340px); }
+  .lucrare.invers .vizual { order: 2; }
+  .vizual :global(.poza) { aspect-ratio: 9 / 16; }
+  .text { display: flex; flex-direction: column; gap: 12px; max-width: 38em; font-size: 17px; }
+  .text h3 { font-size: var(--t-h2); }
+  .scurt { font-size: var(--t-lead); font-weight: 600; line-height: 1.4; }
+  .bife { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .bife li { display: flex; gap: 10px; align-items: flex-start; }
+  .bifa { color: var(--accent); flex: 0 0 auto; margin-top: 1px; }
+  .cere { align-self: flex-start; margin-top: 8px; }
+  .warn { margin-top: 24px; }
+  @media (max-width: 900px) {
+    .lucrare, .lucrare.invers { grid-template-columns: 1fr; gap: 20px; padding-block: 32px; }
+    .lucrare.invers .vizual { order: 0; }
+    .vizual :global(.clip), .vizual :global(.poza) { aspect-ratio: 3 / 4; }
+  }
+</style>

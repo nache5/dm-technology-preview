@@ -1,0 +1,104 @@
+---
+import Baza from '../../../layouts/Baza.astro';
+import Cale from '../../../components/Cale.astro';
+import Foto from '../../../components/Foto.astro';
+import Pret from '../../../components/Pret.astro';
+import CardUtilaj from '../../../components/CardUtilaj.astro';
+import { categorii, categorie } from '../../../data/categorii.mjs';
+import { dinCategorie, numeComplet } from '../../../data/utilaje.mjs';
+import { firma } from '../../../data/firma.mjs';
+import { caleSchema } from '../../../lib/schema.js';
+
+export function getStaticPaths() {
+  return categorii.map((c) => ({ params: { tip: c.slug } }));
+}
+const c = categorie(Astro.params.tip)!;
+const lista = dinCategorie(c.slug);
+const pasi = [{ nume: 'Utilaje', href: '/utilaje/' }, { nume: c.nume, href: Astro.url.pathname }];
+const reale = lista.filter((u) => !u.exemplu);
+const schema = [
+  caleSchema(pasi, Astro.site),
+  ...(reale.length
+    ? [{
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        itemListElement: reale.map((u, i) => ({ '@type': 'ListItem', position: i + 1, url: new URL(`/utilaje/${c.slug}/${u.slug}/`, Astro.site).href, name: numeComplet(u) })),
+      }]
+    : []),
+];
+const fmt = (v: any, s: string) => (v ? `${v} ${s}` : null);
+---
+<Baza title={c.title} description={c.description} schema={schema}>
+  <div class="wrap">
+    <Cale pasi={pasi} />
+    <div class="cap">
+      <div class="text">
+        <h1>{c.nume}: închiriere și vânzare</h1>
+        {c.intro.map((p: string) => <p class="muted">{p}</p>)}
+      </div>
+      <Foto cheie={c.imagine} alt={c.nume} clasa="imag" widths={[480, 720, 960]} sizes="(max-width: 860px) 100vw, 560px" prioritar />
+    </div>
+  </div>
+
+  {lista.length > 0 ? (
+    <>
+      <section class="wrap section-tight" aria-labelledby="comparatie">
+        <h2 id="comparatie" class="h2">Comparație rapidă</h2>
+        <div class="tabel-cutie">
+          <table class="comp num">
+            <thead><tr><th scope="col">Model</th><th scope="col">Lățime</th><th scope="col">Alimentare</th><th scope="col">Greutate</th><th scope="col">Închiriere</th></tr></thead>
+            <tbody>
+              {lista.map((u) => (
+                <tr>
+                  <th scope="row"><a href={`/utilaje/${c.slug}/${u.slug}/`}>{numeComplet(u)}</a></th>
+                  <td>{fmt(u.cheie.latimeMm, 'mm') ?? <span class="todo">—</span>}</td>
+                  <td>{fmt(u.cheie.tensiuneV, 'V') ?? <span class="todo">—</span>}</td>
+                  <td>{fmt(u.cheie.greutateKg, 'kg') ?? <span class="todo">—</span>}</td>
+                  <td>{u.inchiriere.disponibil ? <Pret lei={u.inchiriere.pretZi} laCerere={u.pretLaCerere} /> : 'doar vânzare'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section class="wrap section-tight" aria-labelledby="modele">
+        <h2 id="modele" class="h2">Modele</h2>
+        <div class="grid grid-3">{lista.map((u) => <CardUtilaj u={u} />)}</div>
+      </section>
+    </>
+  ) : (
+    <section class="wrap section-tight">
+      <p class="gol">Modelele din această categorie apar aici în curând. Până atunci, <a href={firma.telefonHref}>sună-ne la {firma.telefon}</a> și îți spunem ce avem în depozit.</p>
+    </section>
+  )}
+
+  {c.intrebari.length > 0 && (
+    <section class="wrap section-tight" aria-labelledby="intrebari">
+      <h2 id="intrebari" class="h2">Întrebări frecvente</h2>
+      <div class="intrebari">
+        {c.intrebari.map((x: any) => <details><summary>{x.q}</summary><p class="muted">{x.a}</p></details>)}
+      </div>
+    </section>
+  )}
+</Baza>
+
+<style>
+  .cap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 560px); gap: 48px; align-items: center; padding: 24px 0 24px; }
+  .text { display: flex; flex-direction: column; gap: 14px; font-size: 18px; }
+  h1 { margin-bottom: 6px; }
+  .cap :global(.imag) { aspect-ratio: 3 / 2; }
+  .tabel-cutie { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+  .comp { width: 100%; border-collapse: collapse; font-size: 16px; min-width: 640px; }
+  .comp th, .comp td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+  .comp thead th { font-size: 14px; color: var(--muted); font-weight: 600; background: var(--soft); }
+  .comp tbody tr:last-child > * { border-bottom: 0; }
+  .comp tbody th { font-weight: 600; }
+  .gol { font-size: 18px; max-width: 40em; }
+  .intrebari { max-width: 44em; border-top: 1px solid var(--line); }
+  .intrebari details { border-bottom: 1px solid var(--line); padding: 4px 0; }
+  .intrebari summary { cursor: pointer; font-weight: 600; font-size: 18px; padding: 12px 0; min-height: 44px; }
+  .intrebari p { padding: 0 0 14px; max-width: 40em; }
+  @media (max-width: 860px) {
+    .cap { grid-template-columns: 1fr; gap: 20px; }
+  }
+</style>

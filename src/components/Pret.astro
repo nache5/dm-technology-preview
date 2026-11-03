@@ -1,0 +1,17 @@
+---
+// Price line for a machine or a type. Prices are lei without VAT. A missing
+// price never shows a made-up number: it reads "Preț la cerere" and carries
+// data-de-confirmat, so the launch build still stops on it.
+interface Props { lei: number | null; unitate?: string; dela?: boolean; laCerere?: boolean }
+const { lei, unitate = 'zi', dela = true, laCerere = false } = Astro.props;
+const fmt = (n: number) => new Intl.NumberFormat('ro-RO').format(n);
+---
+{laCerere
+  ? <span>Preț la cerere</span>
+  : lei === null
+    ? <span data-de-confirmat="preț">Preț la cerere</span>
+    : <span class="num">{dela && 'de la '}{fmt(lei)} lei/{unitate} <span class="muted tva">+ TVA</span></span>}
+
+<style>
+  .tva { font-size: 0.82em; font-weight: 400; }
+</style>

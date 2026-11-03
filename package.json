@@ -1,0 +1,23 @@
+{
+  "name": "dm-technology-site",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "build:launch": "LAUNCH=1 astro build",
+    "build:preview": "PREVIEW=1 astro build",
+    "preview": "astro preview",
+    "test": "node --test \"tests/*.test.mjs\""
+  },
+  "dependencies": {
+    "@fontsource-variable/schibsted-grotesk": "5.3.0",
+    "astro": "5.18.2",
+    "sharp": "0.34.5"
+  },
+  "devDependencies": {
+    "@phosphor-icons/core": "2.1.1",
+    "simple-icons": "16.36.0"
+  }
+}

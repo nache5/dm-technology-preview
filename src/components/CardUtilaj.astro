@@ -1,0 +1,45 @@
+---
+import Foto from './Foto.astro';
+import Pret from './Pret.astro';
+import { numeComplet } from '../data/utilaje.mjs';
+import { categorie } from '../data/categorii.mjs';
+
+interface Props { u: any }
+const { u } = Astro.props;
+const c = categorie(u.categorie);
+const k = u.cheie;
+const fapte = [
+  k.latimeMm && `${k.latimeMm} mm`,
+  k.tensiuneV && `${k.tensiuneV} V`,
+  k.putereKw && `${String(k.putereKw).replace('.', ',')} kW`,
+  k.greutateKg && `${k.greutateKg} kg`,
+].filter(Boolean);
+---
+<a href={`/utilaje/${u.categorie}/${u.slug}/`} class="card">
+  <Foto cheie={u.imagini[0]} alt={numeComplet(u)} clasa="ratio" widths={[400, 640, 860]} sizes="(max-width: 600px) 100vw, 420px" />
+  <span class="pastile">
+    {u.inchiriere.disponibil && <span class="pill">Închiriere</span>}
+    {u.vanzare.disponibil && <span class="pill">Vânzare</span>}
+    {u.stare === 'second-hand' && <span class="pill">Second-hand</span>}
+    {u.exemplu && <span class="pill exemplu">Exemplu</span>}
+  </span>
+  <span class="tip muted">{c?.singular}</span>
+  <span class="nume">{numeComplet(u)}</span>
+  {fapte.length > 0 && <span class="fapte num muted">{fapte.join(', ')}</span>}
+  {u.inchiriere.disponibil && <span class="pret"><Pret lei={u.inchiriere.pretZi} laCerere={u.pretLaCerere} /></span>}
+</a>
+
+<style>
+  .card { display: flex; flex-direction: column; gap: 8px; text-decoration: none; }
+  .card :global(.ratio) { aspect-ratio: 3 / 2; margin-bottom: 4px; }
+  .pastile { display: flex; flex-wrap: wrap; gap: 6px; }
+  .exemplu { background: var(--warn-bg); color: var(--warn-ink); }
+  .tip { font-size: 14.5px; }
+  .nume { font-size: 21px; font-weight: 700; letter-spacing: -0.015em; margin-top: -4px; }
+  .fapte { font-size: 15px; }
+  .pret { font-size: 17px; font-weight: 600; }
+  .card:hover .nume { text-decoration: underline; text-underline-offset: 5px; }
+  @media (max-width: 700px) {
+    .nume { font-size: 20px; }
+  }
+</style>

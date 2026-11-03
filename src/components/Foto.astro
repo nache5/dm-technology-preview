@@ -1,0 +1,36 @@
+---
+// Responsive image (AVIF/WebP). Generated reference images (ref/) are kept
+// off the live site by the launch guard, not by a label.
+import { Picture } from 'astro:assets';
+import { imagine } from '../lib/imagini.js';
+
+interface Props {
+  cheie: string;
+  alt: string;
+  sizes: string;
+  widths: number[];
+  prioritar?: boolean;
+  pozitie?: string;
+  clasa?: string;
+}
+const { cheie, alt, sizes, widths, prioritar = false, pozitie = '50% 50%', clasa = '' } = Astro.props;
+const src = imagine(cheie);
+---
+<div class:list={['media', 'studio', 'foto', clasa]}>
+  <Picture
+    src={src}
+    alt={alt}
+    formats={['avif', 'webp']}
+    widths={widths}
+    sizes={sizes}
+    loading={prioritar ? 'eager' : 'lazy'}
+    fetchpriority={prioritar ? 'high' : 'auto'}
+    decoding="async"
+    style={`object-position: ${pozitie}`}
+  />
+</div>
+
+<style>
+  .foto { position: relative; }
+  .foto :global(picture) { display: block; width: 100%; height: 100%; }
+</style>

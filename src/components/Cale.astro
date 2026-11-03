@@ -1,0 +1,20 @@
+---
+// Breadcrumbs. The page passes the same list to schema.org via `caleSchema`.
+interface Props { pasi: { nume: string; href: string }[] }
+const { pasi } = Astro.props;
+---
+<nav aria-label="Ești aici" class="cale">
+  <ol>
+    {pasi.map((p, i) => (
+      <li>
+        {i < pasi.length - 1 ? <a href={p.href}>{p.nume}</a> : <span aria-current="page">{p.nume}</span>}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .cale ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 8px; font-size: 14.5px; color: var(--muted); }
+  .cale li + li::before { content: '/'; margin-right: 8px; color: var(--line); }
+  .cale a { color: var(--muted); }
+</style>

@@ -1,0 +1,60 @@
+---
+import { firma, lipsa } from '../data/firma.mjs';
+import { categorii } from '../data/categorii.mjs';
+import { lucrari } from '../data/lucrari.mjs';
+const an = new Date().getFullYear();
+const adresa = lipsa(firma.adresa) ? null : `${firma.adresa.strada}, ${firma.adresa.localitate}`;
+const sediu = `${firma.sediuSocial.strada}, ${firma.sediuSocial.localitate}, jud. ${firma.sediuSocial.judet}, ${firma.sediuSocial.codPostal}`;
+---
+<footer class="subsol">
+  <div class="wrap coloane">
+    <div>
+      <p class="nume">{firma.nume}</p>
+      <p>Depozit: {adresa ?? <span class="todo">adresa de confirmat</span>}</p>
+      <p>Program: {firma.program ?? <span class="todo">de confirmat</span>}</p>
+    </div>
+    <div>
+      <p class="titlu">Contact</p>
+      <p><a href={firma.telefonHref} class="num">{firma.telefon}</a></p>
+      <p><a href={`mailto:${firma.email}`}>{firma.email}</a></p>
+      {firma.tiktok && <p><a href={firma.tiktok} rel="me">TikTok</a></p>}
+    </div>
+    <div>
+      <p class="titlu">Lucrări</p>
+      {lucrari.map((l) => <p><a href={`/lucrari/#${l.slug}`}>{l.nume}</a></p>)}
+    </div>
+    <div>
+      <p class="titlu">Utilaje</p>
+      {categorii.map((c) => <p><a href={`/utilaje/${c.slug}/`}>{c.nume}</a></p>)}
+    </div>
+    <div>
+      <p class="titlu">Firma</p>
+      <p><a href="/despre/">Despre noi</a></p>
+      <p><a href="/termeni-inchiriere/">Termeni de închiriere</a></p>
+      <p><a href="/confidentialitate/">Confidențialitate</a></p>
+      <p><a href="https://anpc.ro/ce-este-sal/" rel="noopener">ANPC – SAL</a></p>
+    </div>
+  </div>
+  <div class="wrap jos">
+    <p><span class="legal">© {an} {firma.denumireLegala}</span></p>
+    <p>CUI {firma.platitorTva ? firma.cif : firma.cui}, Reg. Com. {firma.regCom}{firma.capitalSocial && `, capital social ${firma.capitalSocial}`}</p>
+    <p>Sediu social: {sediu}</p>
+  </div>
+</footer>
+
+<style>
+  .subsol { border-top: 1px solid var(--line); color: var(--muted); font-size: 15.5px; line-height: 1.7; }
+  .coloane { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 32px; padding-top: 48px; padding-bottom: 32px; }
+  .nume { font-size: 19px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+  .titlu { font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .legal { color: var(--ink); font-weight: 600; }
+  .subsol a { color: var(--muted); }
+  .subsol a:hover { color: var(--ink); }
+  .jos { padding-bottom: 40px; font-size: var(--t-mic); line-height: 1.6; }
+  /* Rule aligned with the text, not the page padding. */
+  .jos::before { content: ''; display: block; border-top: 1px solid var(--line); margin-bottom: 20px; }
+  @media (max-width: 700px) {
+    .coloane { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 16px; padding-top: 40px; }
+    .coloane > div:first-child { grid-column: 1 / -1; }
+  }
+</style>

@@ -1,0 +1,157 @@
+---
+// Quote request sent as a WhatsApp message. The form only composes the text:
+// WhatsApp opens with it ready and the visitor taps Send there. Nothing goes
+// through our server, so the page never claims the message was sent.
+// Without JavaScript the button still opens WhatsApp with a generic opener.
+import Iconita from './Iconita.astro';
+import { firma } from '../data/firma.mjs';
+
+interface Props { utilaj?: string; lucrare?: string; titlu?: string }
+const { utilaj = '', lucrare = '', titlu = 'Cere ofertă pe WhatsApp' } = Astro.props;
+const id = 'cerere';
+---
+{firma.whatsapp ? (
+  <form
+    id={id}
+    class="formular"
+    action={`https://wa.me/${firma.whatsapp}`}
+    method="get"
+    target="_blank"
+    rel="noopener"
+    novalidate
+    aria-labelledby={`${id}-titlu`}
+    aria-describedby={`${id}-cum`}
+    data-formular-wa
+    data-numar={firma.whatsapp}
+    data-deschidere={firma.whatsappText}
+    data-telefon={firma.telefon}
+  >
+    <h2 id={`${id}-titlu`} class="titlu">{titlu}</h2>
+    <p id={`${id}-cum`} class="cum">Completezi aici, apoi se deschide WhatsApp cu mesajul gata scris. Tu doar apeși <strong>Trimite</strong>.</p>
+    {utilaj && <p class="utilaj">Utilaj: <strong>{utilaj}</strong></p>}
+    {lucrare && <p class="utilaj">Lucrare: <strong>{lucrare}</strong></p>}
+    <input type="hidden" data-camp="utilaj" value={utilaj} />
+    <input type="hidden" data-camp="lucrare" value={lucrare} />
+    <input type="hidden" name="text" value={firma.whatsappText} />
+
+    <div class="camp">
+      <label for={`${id}-nume`}>Nume <span class="stare-camp">(obligatoriu)</span></label>
+      <input id={`${id}-nume`} data-camp="nume" type="text" autocomplete="name" enterkeyhint="next" required aria-required="true" maxlength="80" aria-describedby={`${id}-nume-eroare`} />
+      <p id={`${id}-nume-eroare`} class="eroare" hidden></p>
+    </div>
+
+    <div class="camp">
+      <label for={`${id}-telefon`}>Telefon <span class="stare-camp">(obligatoriu)</span></label>
+      <p id={`${id}-telefon-ajutor`} class="ajutor">Te sunăm la acest număr. Exemplu: 0722 123 456.</p>
+      <input id={`${id}-telefon`} data-camp="telefon" type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="next" required aria-required="true" maxlength="20" aria-describedby={`${id}-telefon-ajutor ${id}-telefon-eroare`} />
+      <p id={`${id}-telefon-eroare`} class="eroare" hidden></p>
+    </div>
+
+    <div class="camp">
+      <label for={`${id}-localitate`}>Localitatea șantierului <span class="stare-camp">(opțional)</span></label>
+      <input id={`${id}-localitate`} data-camp="localitate" type="text" autocomplete="address-level2" enterkeyhint="next" maxlength="80" />
+    </div>
+
+    <div class="camp">
+      <label for={`${id}-mesaj`}>Mesaj <span class="stare-camp">(opțional)</span></label>
+      <p id={`${id}-mesaj-ajutor`} class="ajutor">De exemplu: ce suprafață ai, câți metri pătrați, pentru câte zile.</p>
+      <textarea id={`${id}-mesaj`} data-camp="mesaj" rows="4" maxlength="1000" aria-describedby={`${id}-mesaj-ajutor`}></textarea>
+    </div>
+
+    <button type="submit" class="btn trimite"><Iconita nume="whatsapp" marime={24} /> Trimite pe WhatsApp</button>
+    <div class="stare" role="status" aria-live="polite"></div>
+    <p class="nota">Nu ai WhatsApp? Sună-ne la <a href={firma.telefonHref} class="num">{firma.telefon}</a>.</p>
+    <noscript><p class="nota">Fără JavaScript, WhatsApp se deschide cu un mesaj scurt; scrie acolo numele și ce utilaj te interesează.</p></noscript>
+  </form>
+) : (
+  <div class="formular">
+    <h2 class="titlu">{titlu}</h2>
+    <p>Sună-ne la <a href={firma.telefonHref} class="num">{firma.telefon}</a> sau scrie la <a href={`mailto:${firma.email}`}>{firma.email}</a>.</p>
+  </div>
+)}
+
+<style>
+  .formular { display: flex; flex-direction: column; gap: 18px; background: var(--soft); border-radius: 10px; padding: 28px; }
+  .titlu { font-size: var(--t-h3); }
+  .cum { font-size: 16.5px; line-height: 1.5; }
+  .utilaj { font-size: 16px; }
+  .camp { display: flex; flex-direction: column; gap: 6px; }
+  .camp label { font-size: 17px; font-weight: 700; }
+  .stare-camp { font-weight: 400; color: var(--muted); }
+  .ajutor { font-size: 15px; color: var(--muted); margin-top: -2px; }
+  .camp input, .camp textarea {
+    font: inherit; font-size: 17px; min-height: 52px; padding: 12px 14px;
+    border: 2px solid #6B737A; border-radius: 8px; background: var(--paper); color: var(--ink);
+  }
+  .camp textarea { resize: vertical; min-height: 120px; line-height: 1.45; }
+  .camp input:focus-visible, .camp textarea:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-color: var(--ink); }
+  .camp [aria-invalid='true'] { border-color: #A3261B; background: #FFF8F7; }
+  .eroare { color: #A3261B; font-size: 15.5px; font-weight: 600; display: flex; gap: 6px; }
+  .eroare[hidden] { display: none; }
+  .eroare::before { content: '!'; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: #A3261B; color: #FFFFFF; font-size: 13px; flex: 0 0 auto; }
+  .trimite {
+    min-height: 56px; width: 100%; font-size: 18px; gap: 10px;
+    background: #25D366; color: #0B3B1E;
+  }
+  .trimite:hover { background: #1EBE5A; color: #0B3B1E; }
+  .stare:empty { display: none; }
+  .stare { padding: 14px 16px; border-radius: 8px; font-size: 16px; line-height: 1.5; background: #E3F0EA; color: #1F4236; }
+  .stare.eroare-sumar { background: #FDECEA; color: #7A1D14; }
+  .stare a { color: inherit; font-weight: 700; }
+  .nota { font-size: 15.5px; color: var(--muted); }
+  @media (max-width: 700px) { .formular { padding: 22px 16px; } }
+</style>
+
+<script>
+  import { curata, valideaza, textMesaj, linkWa } from '../lib/mesaj.js';
+
+  for (const f of document.querySelectorAll<HTMLFormElement>('form[data-formular-wa]')) {
+    const camp = (n: string) => f.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[data-camp="${n}"]`)!;
+    const stare = f.querySelector<HTMLElement>('.stare')!;
+
+    const arataEroare = (n: string, text: string | undefined) => {
+      const el = camp(n);
+      const p = f.querySelector<HTMLElement>(`#${el.id}-eroare`);
+      if (!p) return;
+      if (text) { p.textContent = text; p.hidden = false; el.setAttribute('aria-invalid', 'true'); }
+      else { p.textContent = ''; p.hidden = true; el.removeAttribute('aria-invalid'); }
+    };
+
+    // Clear a field's error as soon as it becomes valid.
+    for (const n of ['nume', 'telefon']) {
+      camp(n).addEventListener('input', () => {
+        if (camp(n).getAttribute('aria-invalid') !== 'true') return;
+        const d = curata({ nume: camp('nume').value, telefon: camp('telefon').value });
+        arataEroare(n, valideaza(d)[n as 'nume' | 'telefon']);
+      });
+    }
+
+    f.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const d = curata({
+        utilaj: camp('utilaj').value, lucrare: camp('lucrare').value, nume: camp('nume').value, telefon: camp('telefon').value,
+        localitate: camp('localitate').value, mesaj: camp('mesaj').value,
+      });
+      const erori = valideaza(d);
+      for (const n of ['nume', 'telefon']) arataEroare(n, erori[n as 'nume' | 'telefon']);
+      const gresite = Object.keys(erori);
+      if (gresite.length) {
+        stare.className = 'stare eroare-sumar';
+        stare.textContent = gresite.length === 2 ? 'Completează numele și telefonul.' : `Verifică ${gresite[0] === 'nume' ? 'numele' : 'telefonul'}.`;
+        camp(gresite[0]).focus();
+        return;
+      }
+      const url = linkWa(f.dataset.numar!, textMesaj(d, f.dataset.deschidere!));
+      const fereastra = window.open(url, '_blank');
+      if (fereastra) fereastra.opener = null;
+      else window.location.href = url;
+      stare.className = 'stare';
+      stare.innerHTML = '';
+      stare.append(
+        'Am deschis WhatsApp cu mesajul tău. Apasă Trimite acolo ca să plece. Nu s-a deschis? ',
+        Object.assign(document.createElement('a'), { href: url, target: '_blank', rel: 'noopener', textContent: 'Deschide din nou' }),
+        ` sau sună la ${f.dataset.telefon}.`,
+      );
+    });
+  }
+</script>

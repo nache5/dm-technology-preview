@@ -1,0 +1,33 @@
+---
+import Baza from '../../layouts/Baza.astro';
+import Cale from '../../components/Cale.astro';
+import CardCategorie from '../../components/CardCategorie.astro';
+import CardUtilaj from '../../components/CardUtilaj.astro';
+import { categorii } from '../../data/categorii.mjs';
+import { utilaje } from '../../data/utilaje.mjs';
+import { caleSchema } from '../../lib/schema.js';
+
+const pasi = [{ nume: 'Utilaje', href: '/utilaje/' }];
+---
+<Baza
+  title="Utilaje pardoseli de închiriat și de vânzare | DM Technology"
+  description="Toate utilajele DM Technology: mașini de șlefuit beton, mașini de sablat, freze, aspiratoare industriale și mașini de decopertat, în București."
+  schema={[caleSchema(pasi, Astro.site)]}
+>
+  <div class="wrap">
+    <Cale pasi={pasi} />
+    <h1>Utilaje</h1>
+    <p class="muted lead">Alege tipul de lucrare. Fiecare utilaj se poate închiria sau cumpăra.</p>
+  </div>
+  <section class="wrap section-tight" aria-label="Tipuri de utilaje">
+    <div class="grid grid-3">{categorii.map((c, i) => <CardCategorie c={c} prioritar={i < 3} />)}</div>
+  </section>
+  <section class="wrap section-tight" aria-labelledby="toate">
+    <h2 id="toate" class="h2">Toate modelele</h2>
+    <div class="grid grid-3">{utilaje.map((u) => <CardUtilaj u={u} />)}</div>
+  </section>
+</Baza>
+
+<style>
+  h1 { margin: 20px 0 10px; }
+</style>

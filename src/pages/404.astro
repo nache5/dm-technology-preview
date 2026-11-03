@@ -1,0 +1,9 @@
+---
+import PaginaText from '../components/PaginaText.astro';
+import { firma } from '../data/firma.mjs';
+---
+<PaginaText title="Pagina nu există | DM Technology" description="Pagina căutată nu există." h1="Pagina nu există" noindex cale={false}>
+  <p>Linkul e greșit sau pagina a fost mutată.</p>
+  <p>Sau sună la <a href={firma.telefonHref}>{firma.telefon}</a>.</p>
+  <p class="butoane-404" style="display: flex; flex-wrap: wrap; gap: 10px"><a href="/" class="btn btn-primary">Prima pagină</a> <a href="/utilaje/" class="btn btn-contur">Vezi utilajele</a></p>
+</PaginaText>

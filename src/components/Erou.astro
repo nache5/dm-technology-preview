@@ -1,0 +1,50 @@
+---
+// Home hero with art direction: a wide picture on desktop, a tighter crop
+// of the same scene on phones, both in AVIF and WebP.
+import { getImage } from 'astro:assets';
+import { imagine } from '../lib/imagini.js';
+
+interface Props { lat: string; ingust: string; alt: string }
+const { lat, ingust, alt } = Astro.props;
+
+const variante = async (cheie: string, latimi: number[]) => {
+  const src = imagine(cheie);
+  const set = async (format: 'avif' | 'webp' | 'jpg') =>
+    (await Promise.all(latimi.map((w) => getImage({ src, width: w, format })))).map((r, i) => `${r.src} ${latimi[i]}w`).join(', ');
+  return { avif: await set('avif'), webp: await set('webp'), jpg: await set('jpg'), src };
+};
+const mare = await variante(lat, [960, 1320, 1760]);
+const mic = await variante(ingust, [480, 720, 1000]);
+const fallback = await getImage({ src: imagine(lat), width: 1320, format: 'jpg' });
+const ingustMedia = '(max-width: 700px)';
+const marimi = '(max-width: 1384px) calc(100vw - 64px), 1320px';
+---
+<div class="media studio erou">
+  <picture>
+    <source media={ingustMedia} type="image/avif" srcset={mic.avif} sizes="100vw" />
+    <source media={ingustMedia} type="image/webp" srcset={mic.webp} sizes="100vw" />
+    <source type="image/avif" srcset={mare.avif} sizes={marimi} />
+    <source type="image/webp" srcset={mare.webp} sizes={marimi} />
+    <img src={fallback.src} srcset={mare.jpg} sizes={marimi} alt={alt} width={mare.src.width} height={mare.src.height} fetchpriority="high" decoding="async" />
+  </picture>
+  <span class="sol" aria-hidden="true">DM Technology</span>
+</div>
+
+<style>
+  .erou { position: relative; aspect-ratio: 7 / 3; }
+  .erou picture { display: block; width: 100%; height: 100%; }
+  /* Brand lettering "painted" on the studio floor: laid back in perspective,
+     faded, multiplied into the floor so it picks up the reflections. */
+  .sol {
+    position: absolute; left: 50%; bottom: 3%;
+    transform: translateX(-50%) perspective(520px) rotateX(58deg);
+    transform-origin: 50% 100%;
+    font-weight: 900; font-size: clamp(44px, 8.6vw, 128px); letter-spacing: -0.035em; line-height: 1;
+    white-space: nowrap; color: rgba(27, 31, 34, 0.10); mix-blend-mode: multiply;
+    pointer-events: none; user-select: none;
+  }
+  @media (max-width: 700px) {
+    .erou { aspect-ratio: 3 / 2; }
+    .sol { bottom: 5%; font-size: 12.5vw; transform: translateX(-50%) perspective(300px) rotateX(52deg); }
+  }
+</style>

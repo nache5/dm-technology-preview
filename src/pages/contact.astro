@@ -1,0 +1,51 @@
+---
+import Baza from '../layouts/Baza.astro';
+import Cale from '../components/Cale.astro';
+import Formular from '../components/Formular.astro';
+import { firma, lipsa } from '../data/firma.mjs';
+import { caleSchema } from '../lib/schema.js';
+import { linkWhatsapp } from '../lib/contact.js';
+const wa = linkWhatsapp();
+const pasi = [{ nume: 'Contact', href: '/contact/' }];
+const adresa = lipsa(firma.adresa) ? null : `${firma.adresa.strada}, ${firma.adresa.localitate}`;
+const adresaHarta = lipsa(firma.adresa) ? null : `${firma.adresa.strada}, ${firma.adresa.codPostal} ${firma.adresa.localitate}, ${firma.adresa.judet}`;
+const harta = adresaHarta ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(adresaHarta)}` : null;
+---
+<Baza
+  title="Contact DM Technology: depozit în Voluntari, lângă București"
+  description={`Sună la ${firma.telefon} sau scrie-ne pentru închiriere și vânzare de utilaje pentru pardoseli. Depozit în Voluntari, lângă București.`}
+  schema={[caleSchema(pasi, Astro.site)]}
+>
+  <div class="wrap">
+    <Cale pasi={pasi} />
+    <h1>Contact</h1>
+  </div>
+  <section class="wrap grila">
+    <div class="date">
+      <div><p class="muted eticheta">Telefon</p><p class="mare"><a href={firma.telefonHref} class="num">{firma.telefon}</a></p></div>
+      {wa && <div><p class="muted eticheta">WhatsApp</p><p class="mare"><a href={wa} class="btn btn-wa">Scrie pe WhatsApp</a></p></div>}
+      <div><p class="muted eticheta">E-mail</p><p class="mediu"><a href={`mailto:${firma.email}`}>{firma.email}</a></p></div>
+      <div><p class="muted eticheta">Depozit</p><p class="mediu">{adresa ?? <span class="todo">adresa de confirmat</span>}</p>{harta && <p class="harta"><a href={harta} class="btn btn-mic btn-contur">Deschide în Google Maps</a></p>}</div>
+      <div><p class="muted eticheta">Program</p><p class="mediu">{firma.program ?? <span class="todo">de confirmat</span>}</p></div>
+      <div class="firma">
+        <p class="muted eticheta">Date firmă</p>
+        <p><strong>{firma.denumireLegala}</strong></p>
+        <p>CUI {firma.cif}, Reg. Com. {firma.regCom}</p>
+        <p>Sediu social: {firma.sediuSocial.strada}, {firma.sediuSocial.localitate}, jud. {firma.sediuSocial.judet}, {firma.sediuSocial.codPostal}</p>
+      </div>
+    </div>
+    <Formular />
+  </section>
+</Baza>
+
+<style>
+  h1 { margin: 20px 0 28px; }
+  .grila { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 48px; align-items: start; padding-bottom: 88px; }
+  .date { display: flex; flex-direction: column; gap: 22px; }
+  .eticheta { font-size: 14.5px; margin-bottom: 2px; }
+  .mare { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+  .mediu { font-size: 19px; }
+  .harta { margin-top: 10px; }
+  .firma { border-top: 1px solid var(--line); padding-top: 20px; font-size: 16px; line-height: 1.6; }
+  @media (max-width: 700px) { .mare { font-size: 26px; } }
+</style>

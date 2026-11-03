@@ -1,0 +1,56 @@
+---
+// One TikTok clip as a lightweight facade: DM's cover frame + play button.
+// Nothing from TikTok loads until a click. Where the tile is wide enough the
+// clip then plays in place (TikTok's own player); on narrow screens, and
+// without JavaScript, the link opens the clip on TikTok.
+import Foto from './Foto.astro';
+import Iconita from './Iconita.astro';
+
+interface Props { clip: { id: string; titlu: string; url: string; imagine: string } }
+const { clip } = Astro.props;
+---
+<a href={clip.url} class="clip" data-clip-tiktok={clip.id} data-titlu={clip.titlu} target="_blank" rel="noopener" aria-label={`${clip.titlu}: vezi clipul pe TikTok`}>
+  <Foto cheie={clip.imagine} alt="" clasa="coperta" widths={[320, 480, 640]} sizes="(max-width: 700px) 50vw, 320px" />
+  <span class="play" aria-hidden="true"><Iconita nume="play" marime={24} /></span>
+</a>
+
+<style>
+  .clip { position: relative; display: block; aspect-ratio: 9 / 16; border-radius: 6px; overflow: hidden; text-decoration: none; background: #1B1F22; }
+  .clip :global(.coperta) { position: absolute; inset: 0; border-radius: 0; }
+  /* DM's covers carry their own caption; zoom slightly to drop the black side bars some of them have. */
+  .clip :global(.coperta img) { transform: scale(1.14); }
+  .play {
+    position: absolute; left: 50%; top: 50%; width: 60px; height: 60px; margin: -30px 0 0 -30px; z-index: 1;
+    border-radius: 50%; background: rgba(255,255,255,.92); color: var(--ink);
+    display: flex; align-items: center; justify-content: center; transition: transform .15s ease;
+  }
+  .clip:hover .play, .clip:focus-visible .play { transform: scale(1.08); }
+  .clip :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 2; }
+  @media (max-width: 700px) {
+    .play { width: 48px; height: 48px; margin: -24px 0 0 -24px; }
+  }
+</style>
+
+<script>
+  // Inline playback only on larger screens and wide enough tiles; on phones
+  // the link opens the TikTok app, where vertical video plays full screen.
+  const LATIME_MINIMA = 260;
+  const telefon = window.matchMedia('(max-width: 700px)');
+  for (const a of document.querySelectorAll<HTMLAnchorElement>('a[data-clip-tiktok]')) {
+    a.addEventListener('click', (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      if (telefon.matches || a.getBoundingClientRect().width < LATIME_MINIMA || a.querySelector('iframe')) return;
+      e.preventDefault();
+      const f = document.createElement('iframe');
+      // Same parameters TikTok's own oEmbed uses; browsers only allow autoplay muted.
+      f.src = `https://www.tiktok.com/player/v1/${a.dataset.clipTiktok}?embed_from=oembed&music_info=1&description=1&autoplay=1&muted=1`;
+      f.title = a.dataset.titlu ?? 'Clip TikTok';
+      f.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
+      f.allowFullscreen = true;
+      a.append(f);
+      a.removeAttribute('href');
+      a.setAttribute('role', 'presentation');
+      f.focus();
+    });
+  }
+</script>

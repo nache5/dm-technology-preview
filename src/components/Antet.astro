@@ -1,0 +1,84 @@
+---
+// Sticky header. Desktop: links, WhatsApp icon, phone pill. Phone: WhatsApp
+// and call icons to the left of the menu button.
+import Iconita from './Iconita.astro';
+import { firma } from '../data/firma.mjs';
+import { linkWhatsapp } from '../lib/contact.js';
+const cale = Astro.url.pathname;
+const wa = linkWhatsapp();
+const linkuri = [
+  { href: '/utilaje/', text: 'Utilaje' },
+  { href: '/lucrari/', text: 'Lucrări' },
+  { href: '/inchiriere/', text: 'Închiriere' },
+  { href: '/vanzare/', text: 'Vânzare' },
+  { href: '/contact/', text: 'Contact' },
+];
+const activ = (href: string) => cale.startsWith(href);
+---
+<header class="antet">
+  <div class="wrap bara">
+    <a href="/" class="logo">{firma.nume}</a>
+    <nav aria-label="Meniu principal" class="nav-mare">
+      {linkuri.map((l) => <a href={l.href} aria-current={activ(l.href) ? 'page' : undefined}>{l.text}</a>)}
+      {wa && <a href={wa} class="icon wa" aria-label="Scrie-ne pe WhatsApp" title="Scrie-ne pe WhatsApp"><Iconita nume="whatsapp" marime={24} /></a>}
+      <a href={firma.telefonHref} class="tel num">{firma.telefon}</a>
+    </nav>
+    <div class="dreapta-mic">
+      {wa && <a href={wa} class="icon wa" aria-label="Scrie-ne pe WhatsApp"><Iconita nume="whatsapp" marime={24} /></a>}
+      <a href={firma.telefonHref} class="icon apel" aria-label={`Sună la ${firma.telefon}`}><Iconita nume="telefon" /></a>
+      <details class="nav-mic">
+        <summary aria-label="Meniu"><Iconita nume="meniu" marime={26} clasa="deschide" /><Iconita nume="inchide" marime={26} clasa="inchide" /></summary>
+        <nav aria-label="Meniu principal">
+          {linkuri.map((l) => <a href={l.href} aria-current={activ(l.href) ? 'page' : undefined}>{l.text}</a>)}
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<style>
+  .antet {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(255, 255, 255, 0.92);
+    -webkit-backdrop-filter: saturate(1.4) blur(12px); backdrop-filter: saturate(1.4) blur(12px);
+    border-bottom: 1px solid transparent;
+  }
+  /* A hairline appears once the page has scrolled under the header. */
+  @supports (animation-timeline: scroll()) {
+    .antet { animation: linie linear both; animation-timeline: scroll(); animation-range: 0 80px; }
+    @keyframes linie { to { border-bottom-color: var(--line); } }
+  }
+  @supports not (animation-timeline: scroll()) { .antet { border-bottom-color: var(--line); } }
+
+  .bara { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 76px; }
+  .logo { font-weight: 800; font-size: 21px; letter-spacing: -0.02em; text-decoration: none; white-space: nowrap; min-height: 44px; display: inline-flex; align-items: center; }
+  .nav-mare { display: flex; align-items: center; gap: 28px; font-weight: 500; }
+  .nav-mare a { text-decoration: none; }
+  .nav-mare a[aria-current='page'] { text-decoration: underline; text-underline-offset: 6px; }
+  .tel { border: 1.5px solid var(--ink); padding: 11px 18px; border-radius: 999px; font-weight: 600; white-space: nowrap; }
+  .nav-mare a { white-space: nowrap; }
+  .nav-mare a:not(.icon):not(.tel) { min-height: 44px; display: inline-flex; align-items: center; }
+  @media (max-width: 1180px) { .nav-mare { gap: 20px; } }
+  .icon {
+    width: 46px; height: 46px; border-radius: 999px; flex: 0 0 auto;
+    display: inline-flex; align-items: center; justify-content: center; color: var(--ink);
+  }
+  /* WhatsApp in its own brand colours: white glyph on WhatsApp green. */
+  .wa { background: #25D366; color: #FFFFFF; }
+  .wa:hover { background: #1EBE5A; color: #FFFFFF; }
+  .apel { border: 1.5px solid var(--ink); }
+  .apel:hover { background: var(--soft); }
+  .dreapta-mic { display: none; align-items: center; gap: 8px; }
+  .nav-mic summary { list-style: none; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 999px; }
+  .nav-mic summary::-webkit-details-marker { display: none; }
+  .nav-mic :global(.inchide), .nav-mic[open] :global(.deschide) { display: none; }
+  .nav-mic[open] :global(.inchide) { display: block; }
+  .nav-mic nav { position: absolute; left: 0; right: 0; top: 100%; background: var(--paper); border-bottom: 1px solid var(--line); padding: 8px 16px 16px; display: flex; flex-direction: column; box-shadow: 0 16px 30px rgba(27,31,34,.08); }
+  .nav-mic nav a { text-decoration: none; font-size: 20px; font-weight: 600; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  @media (max-width: 1000px) {
+    .bara { min-height: 64px; }
+    .logo { font-size: 19px; }
+    .nav-mare { display: none; }
+    .dreapta-mic { display: flex; }
+  }
+</style>

@@ -1,0 +1,191 @@
+---
+// One layout for Lucrări, Închiriere and Vânzare. Same sections, same order:
+//   1. intro: title, lead, buttons, quick links + picture
+//   2. dark band with four strengths
+//   3. the page's own content (default slot), under one section title
+//   4. how it works, four numbered steps
+//   5. grey band with tiles (conditions / projects)
+//   6. FAQ + quote form
+// Phones: picture first and full width, everything else stacked under it.
+// Claims DM still has to confirm are not shown as text: the item carries
+// data-de-confirmat="…" and the launch build refuses to run while any remain.
+import Baza from './Baza.astro';
+import Cale from '../components/Cale.astro';
+import Foto from '../components/Foto.astro';
+import Formular from '../components/Formular.astro';
+import Iconita from '../components/Iconita.astro';
+import { firma } from '../data/firma.mjs';
+import { linkWhatsapp } from '../lib/contact.js';
+import { caleSchema } from '../lib/schema.js';
+
+type Bloc = { icon: string; titlu: string; text: string; todo?: string | null };
+interface Props {
+  title: string;
+  description: string;
+  cale: string;
+  h1: string;
+  lead: string;
+  imagine: { cheie: string; alt: string; pozitie?: string };
+  atuuriTitlu: string;
+  atuuri: Bloc[];
+  continutTitlu: string;
+  continutLink?: { text: string; href: string };
+  etapeTitlu: string;
+  etape: Bloc[];
+  placiTitlu: string;
+  placi: Bloc[];
+  placiNota?: string;
+  intrebari: { q: string; a: string | null; todo?: string }[];
+  formTitlu: string;
+  schema?: object[];
+}
+const p = Astro.props;
+const wa = linkWhatsapp();
+const pasi = [{ nume: p.cale, href: Astro.url.pathname }];
+// Unanswered questions stay out of the page until DM answers them.
+const raspunse = p.intrebari.filter((x) => x.a);
+---
+<Baza title={p.title} description={p.description} schema={[caleSchema(pasi, Astro.site), ...(p.schema ?? [])]}>
+  <div class="wrap"><Cale pasi={pasi} /></div>
+
+  <section class="wrap intro">
+    <div class="intro-text">
+      <h1>{p.h1}</h1>
+      <p class="lead muted">{p.lead}</p>
+      <div class="butoane">
+        <a href="#cerere" class="btn btn-primary">Cere ofertă</a>
+        {wa && <a href={wa} class="btn btn-wa"><Iconita nume="whatsapp" marime={20} /> WhatsApp</a>}
+        <a href={firma.telefonHref} class="btn btn-contur">Sună</a>
+      </div>
+    </div>
+    <Foto cheie={p.imagine.cheie} alt={p.imagine.alt} pozitie={p.imagine.pozitie} clasa={p.imagine.cheie.startsWith('tiktok/') ? 'intro-poza din-clip' : 'intro-poza'} widths={[480, 720, 1000, 1320]} sizes="(max-width: 900px) 100vw, 620px" prioritar />
+  </section>
+
+  <section class="banda" aria-labelledby="atuuri">
+    <div class="wrap section-tight">
+      <h2 id="atuuri" class="h2">{p.atuuriTitlu}</h2>
+      <ul class="atuuri">
+        {p.atuuri.map((a) => (
+          <li data-de-confirmat={a.todo ?? undefined}>
+            <span class="ic ic-inchis" aria-hidden="true"><Iconita nume={a.icon as any} marime={28} /></span>
+            <strong>{a.titlu}</strong>
+            <span class="text-banda">{a.text}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="continut">
+    <div class="cap-sectiune">
+      <h2 id="continut" class="h2">{p.continutTitlu}</h2>
+      {p.continutLink && <a href={p.continutLink.href} class="btn btn-mic btn-contur">{p.continutLink.text}</a>}
+    </div>
+    <slot />
+  </section>
+
+  <section class="wrap section-tight etape-sectiune" aria-labelledby="etape">
+    <h2 id="etape" class="h2">{p.etapeTitlu}</h2>
+    <ol class="etape">
+      {p.etape.map((e, i) => (
+        <li data-de-confirmat={e.todo ?? undefined}>
+          <span class="nr num" aria-hidden="true">{i + 1}</span>
+          <span class="ic" aria-hidden="true"><Iconita nume={e.icon as any} marime={28} /></span>
+          <strong>{e.titlu}</strong>
+          <span class="muted">{e.text}</span>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="moale" aria-labelledby="placi">
+    <div class="wrap section-tight">
+      <h2 id="placi" class="h2">{p.placiTitlu}</h2>
+      <ul class="placi">
+        {p.placi.map((c) => (
+          <li data-de-confirmat={c.todo ?? undefined}>
+            <span class="ic ic-alb" aria-hidden="true"><Iconita nume={c.icon as any} marime={24} /></span>
+            <strong>{c.titlu}</strong>
+            <span class="muted">{c.text}</span>
+          </li>
+        ))}
+      </ul>
+      {p.placiNota && <p class="muted nota" set:html={p.placiNota} />}
+    </div>
+  </section>
+
+  <section class:list={['wrap', 'section', 'jos', { 'doar-formular': !raspunse.length }]}>
+    {raspunse.length > 0 && (
+      <div>
+        <h2 class="h2">Întrebări frecvente</h2>
+        <div class="intrebari">
+          {raspunse.map((x) => (
+            <details>
+              <summary>{x.q}</summary>
+              <p class="muted">{x.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    )}
+    <Formular titlu={p.formTitlu} />
+  </section>
+</Baza>
+
+<style>
+  .intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center; padding-top: 12px; padding-bottom: var(--sp-tight); }
+  .intro-text { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+  .intro-text .lead { max-width: 32em; }
+  .butoane { display: flex; flex-wrap: wrap; gap: 10px; }
+  .intro :global(.intro-poza) { aspect-ratio: 4 / 3; border-radius: 8px; }
+  /* TikTok frames have black side bars: zoom past them. */
+  .intro :global(.din-clip img) { transform: scale(1.25); }
+
+  .ic { width: 52px; height: 52px; border-radius: 14px; background: var(--soft); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+  .ic-inchis { background: rgba(255,255,255,.08); color: #9FD9BE; }
+  .ic-alb { background: var(--paper); width: 46px; height: 46px; border-radius: 12px; }
+
+  .banda { background: var(--ink); color: #FFFFFF; }
+  .banda .h2 { color: #FFFFFF; }
+  .atuuri { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 28px; }
+  .atuuri li { display: flex; flex-direction: column; gap: 8px; }
+  .atuuri strong { font-size: 19px; margin-top: 6px; }
+  .text-banda { color: #D5D9D6; font-size: 16px; }
+
+  .cap-sectiune { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; margin-bottom: 28px; }
+  .cap-sectiune .h2 { margin-bottom: 0; }
+
+  .etape-sectiune { border-top: 1px solid var(--line); }
+  .etape { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+  .etape li { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 24px 22px; border: 1px solid var(--line); border-radius: 12px; font-size: 16px; }
+  .etape strong { font-size: 19px; margin-top: 6px; }
+  .nr { position: absolute; top: 18px; right: 20px; font-size: 40px; font-weight: 800; letter-spacing: -0.03em; color: var(--line); line-height: 1; }
+
+  .moale { background: var(--soft); }
+  .placi { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }
+  .placi li { background: var(--paper); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 16px; }
+  .placi strong { font-size: 18px; margin-top: 4px; }
+  .nota { margin-top: 20px; font-size: 16px; }
+
+  .doar-formular { grid-template-columns: minmax(0, 720px); }
+  .jos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 48px; align-items: start; }
+  .intrebari { border-top: 1px solid var(--line); }
+  .intrebari details { border-bottom: 1px solid var(--line); padding: 4px 0; }
+  .intrebari summary { cursor: pointer; font-weight: 600; font-size: 18px; padding: 12px 0; min-height: 44px; }
+  .intrebari p { padding: 0 0 14px; max-width: 40em; }
+
+  @media (max-width: 1000px) {
+    .atuuri, .etape { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 900px) {
+    .intro { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+    /* Phones and tablets: picture first, full width. */
+    .intro :global(.intro-poza) { order: -1; aspect-ratio: 3 / 2; }
+  }
+  @media (max-width: 700px) {
+    .atuuri { gap: 24px 16px; }
+    .etape { grid-template-columns: 1fr; gap: 12px; }
+    .placi { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .placi li { padding: 16px 14px; }
+  }
+</style>
