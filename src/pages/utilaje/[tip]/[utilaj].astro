@@ -40,7 +40,7 @@ const optiuni = [u.inchiriere.disponibil && 'de închiriat', u.vanzare.disponibi
 // Under ~65 characters where possible: drop the brand suffix before the keywords.
 const lung = `${nume}, ${c.singular.toLowerCase()} ${optiuni} | DM Technology`;
 const title = lung.length <= 65 ? lung : `${nume}, ${c.singular.toLowerCase()} ${optiuni}`.length <= 65 ? `${nume}, ${c.singular.toLowerCase()} ${optiuni}` : `${nume} ${optiuni} | DM Technology`;
-const description = `${nume}: ${c.singular.toLowerCase()} ${optiuni} în București. ${u.pentruCe}`;
+const description = `${nume}: ${c.singular.toLowerCase()} ${optiuni} în toată România. ${u.pentruCe}`;
 ---
 <Baza title={title} description={description} noindex={u.exemplu} ogImage={og.src} schema={schema}>
   <div class="wrap">

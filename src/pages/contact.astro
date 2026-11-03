@@ -12,8 +12,8 @@ const adresaHarta = lipsa(firma.adresa) ? null : `${firma.adresa.strada}, ${firm
 const harta = adresaHarta ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(adresaHarta)}` : null;
 ---
 <Baza
-  title="Contact DM Technology: depozit în Voluntari, lângă București"
-  description={`Sună la ${firma.telefon} sau scrie-ne pentru închiriere și vânzare de utilaje pentru pardoseli. Depozit în Voluntari, lângă București.`}
+  title="Contact DM Technology: utilaje și lucrări pentru pardoseli"
+  description={`Sună la ${firma.telefon} sau scrie-ne pentru închiriere și vânzare de utilaje pentru pardoseli. Depozit în Voluntari, Ilfov; lucrăm în toată România.`}
   schema={[caleSchema(pasi, Astro.site)]}
 >
   <div class="wrap">

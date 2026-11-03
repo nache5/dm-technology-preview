@@ -12,8 +12,8 @@ export const lucrari = [
     pretM2: null,
     nume: 'Sablare beton',
     scurt: 'Curățăm și deschidem porul betonului înainte de epoxy, poliuretan sau hidroizolație.',
-    h1: 'Sablare beton în București',
-    title: 'Sablare beton (shot blasting) București | DM Technology',
+    h1: 'Sablare beton în toată România',
+    title: 'Sablare beton (shot blasting) România | DM Technology',
     description:
       'Executăm sablare cu alice pe beton: pregătim suportul pentru epoxy, poliuretan și hidroizolație. Hale, parcări, poduri, piste. Cere ofertă pe WhatsApp.',
     intro: [
@@ -40,8 +40,8 @@ export const lucrari = [
     pretM2: null,
     nume: 'Șlefuire beton',
     scurt: 'Netezim și curățăm betonul, șapa și terrazzo-ul; scoatem adeziv, mochetă și vopsea.',
-    h1: 'Șlefuire beton și pardoseli în București',
-    title: 'Șlefuire beton și pardoseli București | DM Technology',
+    h1: 'Șlefuire beton și pardoseli în toată România',
+    title: 'Șlefuire beton și pardoseli România | DM Technology',
     description:
       'Executăm șlefuire de beton, șapă și terrazzo: netezire, scos adeziv, resturi de mochetă și vopsea, pregătire pentru epoxy. Cere ofertă pe WhatsApp.',
     intro: [
@@ -67,8 +67,8 @@ export const lucrari = [
     pretM2: null,
     nume: 'Frezare beton',
     scurt: 'Scoatem straturi groase, denivelări și marcaje, de la 1 până la 20 mm pe trecere.',
-    h1: 'Frezare beton în București',
-    title: 'Frezare beton și degroșare București | DM Technology',
+    h1: 'Frezare beton în toată România',
+    title: 'Frezare beton și degroșare România | DM Technology',
     description:
       'Executăm frezare de beton: scoatem straturi groase, denivelări, marcaje și vopsea groasă, de la 1 până la 20 mm pe trecere. Cere ofertă pe WhatsApp.',
     intro: [
@@ -94,7 +94,7 @@ export const lucrari = [
     pretM2: null,
     nume: 'Decopertare pardoseli',
     scurt: 'Scoatem gresie, PVC, linoleum, mochetă și parchet lipit, până la suportul curat.',
-    h1: 'Decopertare pardoseli în București',
+    h1: 'Decopertare pardoseli în toată România',
     title: 'Decopertare pardoseli: gresie, PVC, mochetă | DM Technology',
     description:
       'Executăm decopertare de pardoseli: scoatem gresie, PVC, linoleum, mochetă și parchet lipit, apoi curățăm adezivul. Cere ofertă pe WhatsApp.',

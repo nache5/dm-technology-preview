@@ -2,19 +2,17 @@
 import Baza from '../layouts/Baza.astro';
 import Erou from '../components/Erou.astro';
 import ClipTiktok from '../components/ClipTiktok.astro';
-import CardLucrare from '../components/CardLucrare.astro';
 import CardCategorie from '../components/CardCategorie.astro';
 import { categorii } from '../data/categorii.mjs';
 import { firma } from '../data/firma.mjs';
 import { clipuri } from '../data/tiktok.mjs';
-import { lucrari } from '../data/lucrari.mjs';
 
 const mari = categorii.filter((c) => c.mare);
 const mici = categorii.filter((c) => !c.mare);
 ---
 <Baza
-  title="Închiriere utilaje pardoseli București | DM Technology"
-  description="Închiriem și vindem utilaje pentru pardoseli în București și Ilfov și executăm lucrări de sablare, șlefuire, frezare și decopertare a betonului."
+  title="Utilaje pentru pardoseli: vânzare, închiriere, lucrări | DM Technology"
+  description="DM Technology vinde și închiriază utilaje pentru pregătirea pardoselilor și execută lucrări de sablare, șlefuire, frezare și decopertare a betonului, în toată România."
 >
   <section class="wrap">
     <Erou
@@ -23,28 +21,18 @@ const mici = categorii.filter((c) => !c.mare);
       alt="Utilajele DM în arc: freză, mașină de sablat, mașină de șlefuit beton, aspirator industrial și mașină de decopertat"
     />
     <div class="intro">
-      <h1>Utilaje pentru pardoseli. De închiriat sau de cumpărat, în București și Ilfov.</h1>
+      <h1>Utilaje pentru pardoseli – de închiriat sau de cumpărat. În toată România</h1>
       <div class="intro-dr">
-        <p class="muted">Închiriem și vindem mașini de șlefuit beton, freze, mașini de sablat și aspiratoare industriale.</p>
-        <p class="facem">Sau facem noi lucrarea: <a href="/lucrari/#sablare-beton">sablare</a>, <a href="/lucrari/#slefuire-beton">șlefuire</a>, <a href="/lucrari/#frezare-beton">frezare</a> și <a href="/lucrari/#decopertare-pardoseli">decopertare</a>.</p>
+        <ul class="trei-roluri">
+          <li><strong>Vindem</strong> utilaje pentru pardoseli: mașini de șlefuit beton, de sablat, freze, aspiratoare industriale.</li>
+          <li><strong>Închiriem</strong> aceleași utilaje, pe zi, săptămână sau lună.</li>
+          <li><strong>Executăm</strong> lucrări de sablare, șlefuire, frezare și decopertare, cu echipa noastră.</li>
+        </ul>
         <div class="butoane">
           <a href="/utilaje/" class="btn btn-primary">Vezi utilajele</a>
           <a href="/lucrari/" class="btn btn-soft">Vezi lucrările</a>
         </div>
       </div>
-    </div>
-  </section>
-
-  <section class="banda" aria-labelledby="lucrari">
-    <div class="wrap section">
-      <div class="cap">
-        <div>
-          <h2 id="lucrari" class="h2">Executăm lucrări de pardoseli</h2>
-          <p class="sub-banda">Cu echipa și utilajele noastre: tu ne spui suprafața, noi o pregătim.</p>
-        </div>
-        <a href="/lucrari/" class="btn btn-mic btn-contur-alb">Toate lucrările</a>
-      </div>
-      <div class="grid grid-4 lucrari">{lucrari.map((l) => <CardLucrare l={l} />)}</div>
     </div>
   </section>
 
@@ -91,7 +79,6 @@ const mici = categorii.filter((c) => !c.mare);
 
 <style>
   .intro { display: flex; flex-wrap: wrap; gap: 28px 64px; align-items: flex-end; padding: 48px 0 40px; }
-  h1 { flex: 1 1 560px; min-width: 0; font-size: var(--t-hero); line-height: 1; }
   .intro-dr { flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 20px; font-size: 18px; }
   .butoane { display: flex; flex-wrap: wrap; gap: 12px; }
   .sub { margin-top: 40px; }
@@ -105,19 +92,11 @@ const mici = categorii.filter((c) => !c.mare);
   .cap { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; margin-bottom: 28px; }
   .cap .h2 { margin-bottom: 0; }
   .clipuri { list-style: none; margin: 0; padding: 0; }
-  .facem { font-weight: 600; }
-  .banda { background: var(--ink); color: #FFFFFF; }
-  .banda .h2 { color: #FFFFFF; }
-  .sub-banda { color: #C9CDCA; font-size: 18px; margin-top: 8px; }
-  .banda :global(.card .nume) { color: #FFFFFF; }
-  .banda :global(.card .scurt) { color: #C9CDCA; }
-  .banda :global(.card .link) { color: #FFFFFF; border-color: rgba(255,255,255,.7); }
-  .banda :global(.card:hover .link) { background: rgba(255,255,255,.1); }
-  .banda :global(.card:hover .nume) { color: #FFFFFF; }
-  .banda :global(a:focus-visible) { outline-color: #9FD9BE; }
+  h1 { flex: 1 1 560px; min-width: 0; font-size: var(--t-hero); line-height: 1; }
+  .trei-roluri { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; color: var(--muted); }
+  .trei-roluri strong { color: var(--ink); }
   @media (max-width: 700px) {
     .intro { padding: 28px 0 40px; }
-    .lucrari { gap: 36px; }
     .trei { grid-template-columns: 1fr; gap: 32px; }
     /* Vertical clips stay two per row; one per row would be a full screen each. */
     .clipuri { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }

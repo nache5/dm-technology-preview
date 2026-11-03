@@ -16,13 +16,13 @@ const schema = lucrari.map((l) => ({
   name: l.nume,
   description: l.scurt,
   provider: { '@id': new URL('/#firma', Astro.site).href },
-  areaServed: [{ '@type': 'City', name: 'București' }, { '@type': 'AdministrativeArea', name: 'Ilfov' }],
+  areaServed: { '@type': 'Country', name: 'România' },
   url: new URL(`/lucrari/#${l.slug}`, Astro.site).href,
 }));
 ---
 <PaginaServiciu
-  title="Sablare, șlefuire, frezare beton București | DM Technology"
-  description="DM Technology execută lucrări de sablare, șlefuire, frezare și decopertare a pardoselilor, cu echipa și utilajele proprii, în București și Ilfov."
+  title="Sablare, șlefuire, frezare beton în România | DM Technology"
+  description="DM Technology execută lucrări de sablare, șlefuire, frezare și decopertare a pardoselilor, cu echipa și utilajele proprii, în toată România."
   cale="Lucrări"
   h1="DM Technology execută și lucrări de pardoseli"
   lead="Nu doar închiriem și vindem utilaje. Venim cu echipa și utilajele noastre și facem noi lucrarea: sablare, șlefuire, frezare și decopertare."
@@ -46,7 +46,7 @@ const schema = lucrari.map((l) => ({
   placi={proiecte.map((p) => ({ icon: 'loc', titlu: p.nume, text: `${gaseste(p.lucrare)?.nume}: ${p.detaliu}`, todo: p.confirmat ? null : 'de confirmat' }))}
   intrebari={[
     { q: 'Cât costă o lucrare?', a: null, todo: 'De la DM: preț pe m² sau doar la cerere, după poze.' },
-    { q: 'Lucrați și în afara Bucureștiului?', a: null, todo: 'De la DM: zona în care lucrați.' },
+    { q: 'În ce zone lucrați?', a: 'În toată România.' },
     { q: 'Pot închiria utilajul și să lucrez singur?', a: 'Da. Închiriezi aceleași utilaje cu care lucrăm, pe zi, săptămână sau lună. Vezi pagina Închiriere.' },
   ]}
   formTitlu="Cere ofertă pentru o lucrare"

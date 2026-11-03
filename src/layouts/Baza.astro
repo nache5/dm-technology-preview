@@ -44,7 +44,7 @@ const business = {
   openingHoursSpecification: firma.orar
     ? [{ '@type': 'OpeningHoursSpecification', dayOfWeek: firma.orar.zile, opens: firma.orar.deschide, closes: firma.orar.inchide }]
     : undefined,
-  areaServed: [{ '@type': 'City', name: 'București' }, { '@type': 'AdministrativeArea', name: 'Ilfov' }],
+  areaServed: { '@type': 'Country', name: 'România' },
 };
 const jsonLd = [business, ...schema];
 ---

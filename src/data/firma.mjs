@@ -27,7 +27,7 @@ export const firma = {
   // Same hours for schema.org / Google.
   orar: { zile: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], deschide: '09:00', inchide: '17:00' },
   tiktok: 'https://www.tiktok.com/@dmtechnologyproducts',
-  livrare: null, // ex. "Livrăm pe șantier în București și Ilfov."
+  livrare: null, // ex. "Livrăm pe șantier în toată țara."
   // Rents to private people too? Changes VAT display (consumers see prices with VAT).
   persoaneFizice: null,
 };
